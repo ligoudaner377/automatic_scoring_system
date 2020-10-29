@@ -20,7 +20,7 @@ class Scorer():
 
     def access(self, kadai_url, username_input, password_input, mode): 
         self.driver.get('https://moodle.s.kyushu-u.ac.jp/login/index.php')
-       
+        self.driver.maximize_window()
         username = self.driver.find_element_by_name('username')
         username.clear()
         username.send_keys(username_input)
@@ -34,8 +34,11 @@ class Scorer():
             moodle_url = 'https://moodle.s.kyushu-u.ac.jp/course/view.php?id=20717'
             self.driver.get(moodle_url)
             self.driver.find_elements_by_class_name("instancename")[1].click()
+            windows = self.driver.window_handles
+            self.driver.switch_to.window(windows[-1])
         
         self.driver.get(kadai_url)
+       
         html = self.driver.page_source
         soup = BeautifulSoup(html, features='lxml')
         pages = soup.select('li[class="page-item"]')
