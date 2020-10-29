@@ -18,7 +18,7 @@ class Scorer():
             score = 60.00
         return str(score)  
 
-    def access(self, kadai_url, username_input, password_input): 
+    def access(self, kadai_url, username_input, password_input, mode): 
         self.driver.get('https://moodle.s.kyushu-u.ac.jp/login/index.php')
        
         username = self.driver.find_element_by_name('username')
@@ -30,8 +30,12 @@ class Scorer():
         password.send_keys(password_input)
         password.send_keys(Keys.RETURN)
         
-        self.driver.get('https://moodle.s.kyushu-u.ac.jp/mod/assign/view.php?id=159932&action=grading')
+        if mode=='lu':
+            moodle_url = 'https://moodle.s.kyushu-u.ac.jp/course/view.php?id=20717'
+            self.driver.get(moodle_url)
+            self.driver.find_elements_by_class_name("instancename")[1].click()
         
+        self.driver.get(kadai_url)
         html = self.driver.page_source
         soup = BeautifulSoup(html, features='lxml')
         pages = soup.select('li[class="page-item"]')
@@ -68,8 +72,8 @@ class Scorer():
         save.click()
         print('successfully saved!!!')
         
-    def auto_score(self, kadai_url, username_input, password_input):
-        self.access(kadai_url, username_input, password_input)
+    def auto_score(self, kadai_url, username_input, password_input, mode='konomi'):
+        self.access(kadai_url, username_input, password_input, mode)
         self.score()
         # continue
         self.driver.find_element_by_xpath('//div[@role="main"]/div[@class="continuebutton"]/form/button').click()
